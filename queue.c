@@ -1,50 +1,67 @@
 #include <stdio.h>
 #include <stdlib.h>
 #define QUEUE_SIZE 100
-int queue[QUEUE_SIZE];
-int rear = -1;
-int front = -1;
+
+int front, rear;
+int cqueue[QUEUE_SIZE];
 void print_queue();
-void addq(int item);
-int deleteq();
+void addcq(int item);
+int deletecq();
 
 
 /* run this program using the console pauser or add your own getch, system("pause") or input loop */
 
-void main() {
+int main() {
 	
 	int temp;
+	front = rear = 0;
 	
-	addq(3);
-	addq(5);
-	addq(7);
-	temp = deleteq();
+	addcq(11);
+	addcq(13);
+	addcq(17);
+	addcq(19);
+	temp = deletecq();
+	print_queue();
+	temp = deletecq();
+	print_queue();
+	temp = deletecq();
+	print_queue();
+	temp = deletecq();
 	print_queue();
 }
 
 void print_queue()
 {
-	int i;
-	for(i = front+1; i <= rear; i++)
-		printf("%d ", queue[i]);
+	int i = front;
+	while(i != rear)
+	{
+		i = ++i % QUEUE_SIZE;
+		printf("%d ", cqueue[i]);
+	}
+	printf("\n");
 }
 
-void addq(int item)
+void addcq(int item)
 {
-	if(rear == QUEUE_SIZE-1)
+	//check if there is a room in the queue
+	if(((rear+1) % QUEUE_SIZE) == front)
 	{
-		printf("Queue is full\n");
+		printf("Queue Full\n");
 		return;
 	}
-	queue[++rear] = item;
+	rear = (rear+1) % QUEUE_SIZE;
+	cqueue[rear] = item;
+	//print the queue
+	print_queue();
 }
 
-int deleteq()
+int deletecq()
 {
 	if(front == rear) //empty queue
 	{
 		printf("empty queue\n");
 		return -999;
 	}
-	return queue[++front]; //now the front is empty
+	front = (front+1) % QUEUE_SIZE;
+	return cqueue[front]; //
 }
