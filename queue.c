@@ -1,67 +1,142 @@
 #include <stdio.h>
-#include <stdlib.h>
-#define QUEUE_SIZE 100
-
-int front, rear;
-int cqueue[QUEUE_SIZE];
-void print_queue();
-void addcq(int item);
-int deletecq();
+#include <string.h>
+#define STACK_SIZE 100
+#define EXPR_SIZE 100
 
 
-/* run this program using the console pauser or add your own getch, system("pause") or input loop */
+typedef enum
+{
+	open_b, close_b, plus, minus, times, divide, mod, eos, operand
+} priority;
 
-int main() {
-	
-	int temp;
-	front = rear = 0;
-	
-	addcq(11);
-	addcq(13);
-	addcq(17);
-	addcq(19);
-	temp = deletecq();
-	print_queue();
-	temp = deletecq();
-	print_queue();
-	temp = deletecq();
-	print_queue();
-	temp = deletecq();
-	print_queue();
+int stack[STACK_SIZE];
+char expr[EXPR_SIZE];
+int pos = 0;
+char sym;
+int sym_type;
+int top = -1;
+
+int eval_postfix();
+void push(int item);
+int pop();
+
+char read_item();
+void main()
+{
+	strcpy(expr, "57*9+34/-");
+	strcpy(expr, "936+5-/7+64-*");
+	eval_postfix();
 }
 
-void print_queue()
+int eval_postfix()
 {
-	int i = front;
-	while(i != rear)
+	char op2;
+	while(read_item() != eos)
 	{
-		i = ++i % QUEUE_SIZE;
-		printf("%d ", cqueue[i]);
+		if (sym_type == operand)
+		{
+			sym = sym - '0'; //atoi
+			push(sym);
+		}
+		else
+			{
+				switch (sym_type)
+				{
+					case (open_b) :
+						push(sym);
+						break;
+					case (close_b) :
+						while(expr[top] != '(')
+							pop();
+						break;						
+					case (plus) :
+						push(pop() + pop());
+						break;
+					case (minus) :
+						op2 = pop();
+						push(pop() - op2);
+						break;					
+					case (times) :
+						push(pop() * pop());
+						break;
+					case (divide) :
+						op2 = pop();
+						if(op2 != 0)
+							push(pop() / op2);
+						else
+							printf("error! zero divisor\n");
+						break;
+					case (mod) :
+						op2 = pop();
+						if(op2 != 0)
+							push(pop() % op2);
+						else
+							printf("error! zero divisor\n");
+						break;
+				}
+
+			}
+		pos++;
 	}
-	printf("\n");
+	printf("result: %d", pop());
 }
 
-void addcq(int item)
+void push(int item)
 {
-	//check if there is a room in the queue
-	if(((rear+1) % QUEUE_SIZE) == front)
+	//check if there is room for the item
+	if(top == STACK_SIZE-1)
 	{
-		printf("Queue Full\n");
+		printf("stack full\n");
 		return;
 	}
-	rear = (rear+1) % QUEUE_SIZE;
-	cqueue[rear] = item;
-	//print the queue
-	print_queue();
+	stack[++top] = item;
+	return;
 }
 
-int deletecq()
+int pop()
 {
-	if(front == rear) //empty queue
+	//check if stack is empty
+	if(top < 0)
 	{
-		printf("empty queue\n");
+		printf("Stack empty\n");
 		return -999;
 	}
-	front = (front+1) % QUEUE_SIZE;
-	return cqueue[front]; //
+	return stack[top--];
 }
+
+char read_item()
+{
+	int sym;
+	sym = expr[pos];
+	switch (sym)
+	{
+		case '(': 
+			sym_type = open_b; 
+			break;
+		case ')' :
+			sym_type = close_b; 
+			break;
+		case '\0' :
+			sym_type = eos; 
+			break;
+		case '+' :
+			sym_type = plus; 
+			break;
+		case '-' :
+			sym_type = minus; 
+			break;
+		case '*' :
+			sym_type = times; 
+			break;
+	    case '/' :
+	    	sym_type = divide; 
+			break;
+		case '%' :
+			sym_type = mod; 
+			break;
+		default :
+			sym_type = operand;
+	}
+	return sym_type;
+}
+
