@@ -1,21 +1,21 @@
-/*selection sort-max-first version*/
+/*bubble sort*/
 #include <stdio.h>
 void swap(int *a, int *b);
 
 int main()
 {
-    int list[] = {31, 9, 10, 23, 49, 15, 11, 7};
-    int max, i, j;
+    int list[] = {15, 4, 8, 3, 50, 9, 20};
+    int flag = 1, i, j;
     int n = sizeof(list)/sizeof(int);
-    for(i = n-1; i > 1; i--)
+    for(i = n-1; flag > 0; i--)
     {
-        max = i;
-        for(j = i-1; j >= 0; j--)
-            if(list[j] > list[max])
+        flag = 0; //no swap
+        for(j = 0; j < i; j++)
+            if(list[j] > list[j+1])
             {
-                max = j;
-            }
-        swap(&list[i], &list[max]);    
+                swap(&list[j], &list[j+1]);
+                flag = 1; //swap
+            }   
     }
 
 }
