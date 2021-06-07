@@ -1,21 +1,21 @@
-/*selection sort-min based*/
+/*selection sort-max-first version*/
 #include <stdio.h>
 void swap(int *a, int *b);
 
 int main()
 {
-    int list[] = {9, 5, 2, 7, 4, 6, 3};
-    int min, i, j;
+    int list[] = {31, 9, 10, 23, 49, 15, 11, 7};
+    int max, i, j;
     int n = sizeof(list)/sizeof(int);
-    for(i = 0; i < n-1; i++)
+    for(i = n-1; i > 1; i--)
     {
-        min = i;
-        for(j = i+1; j < n; j++)
-            if(list[j] < list[min])
+        max = i;
+        for(j = i-1; j >= 0; j--)
+            if(list[j] > list[max])
             {
-                min = j;
+                max = j;
             }
-        swap(&list[i], &list[min]);    
+        swap(&list[i], &list[max]);    
     }
 
 }
