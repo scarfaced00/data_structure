@@ -1,4 +1,4 @@
-/*selection sort*/
+/*selection sort-min based*/
 #include <stdio.h>
 void swap(int *a, int *b);
 
